@@ -2,7 +2,7 @@
 
 **Full-Stack Web Developer · KunleTech Founder · Lagos, Nigeria**
 
-🌐 Live site: [kunle777.github.io](https://kunle777.github.io) &nbsp;|&nbsp; 📧 olanipekunabdulrazaq@gmail.com &nbsp;|&nbsp; 💼 [LinkedIn](https://www.linkedin.com/in/abdul-razaq-olanipekun-81aa0a381)
+🌐 Live site: [kunle777.github.io](https://kunle777.github.io) &nbsp;|&nbsp; 📧 olanipekunabdulrazaq@gmail.com &nbsp;|&nbsp; 💼 [LinkedIn](https://www.linkedin.com/in/abdul-razaq-olanipekun-81aa0a381) &nbsp;|&nbsp; ▶️ [YouTube](https://www.youtube.com/@KunleTechAI)
 
 ---
 
