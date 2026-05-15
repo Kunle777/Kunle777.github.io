@@ -1,0 +1,58 @@
+/* ═══════════════════════════════
+   KUNLETECH PORTFOLIO — animations.css
+═══════════════════════════════ */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .4; transform: scale(.8); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Reveal on scroll */
+.rv {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s var(--ez), transform .7s var(--ez);
+}
+.rv.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay helpers */
+.d1 { transition-delay: .1s; }
+.d2 { transition-delay: .2s; }
+.d3 { transition-delay: .3s; }
+.d4 { transition-delay: .4s; }
+.d5 { transition-delay: .5s; }
+
+/* 3D card tilt */
+.pc {
+  transform-style: preserve-3d;
+  transition: transform .4s var(--ez), box-shadow .4s var(--ez);
+}
+.pc:hover {
+  box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(232,160,32,.06);
+}
+
+/* Hero canvas code rain glow */
+#hero-canvas { filter: blur(.3px); }

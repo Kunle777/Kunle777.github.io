@@ -1,0 +1,172 @@
+/* ═══════════════════════════════
+   KUNLETECH PORTFOLIO — responsive.css
+═══════════════════════════════ */
+
+/* ── Hide custom cursor on touch devices ── */
+@media (hover: none) {
+  #cdot, #cring { display: none; }
+  body { cursor: auto; }
+  .btn, .pcl, .exp-tab, .hbg, .ncta { cursor: pointer; }
+}
+
+/* ══════════════════════════════
+   TABLET — 1024px
+══════════════════════════════ */
+@media (max-width: 1024px) {
+  #hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-r { display: none; }
+  .hero-l-content { padding: 72px 36px 64px; }
+
+  .about-grid { grid-template-columns: 1fr; gap: 48px; }
+  .yt-grid    { grid-template-columns: 1fr; gap: 48px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+
+  .exp-grid { grid-template-columns: 1fr; }
+  .exp-nav {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-right: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--rail);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    gap: 6px;
+  }
+  .exp-panels { padding-left: 0; }
+
+  .proj-grid { grid-template-columns: 1fr; }
+  .edu-grid  { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════
+   MOBILE — 768px
+══════════════════════════════ */
+@media (max-width: 768px) {
+  #cdot, #cring { display: none !important; }
+  .wrap    { padding: 0 20px; }
+  .section { padding: 72px 0; }
+
+  /* Nav */
+  .nlinks {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: var(--nav);
+    left: 0; right: 0;
+    background: rgba(5,5,10,.97);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--rail);
+    padding: 18px 0 32px;
+    z-index: 499;
+  }
+  .nlinks.open { display: flex; }
+  .nlinks a {
+    padding: 14px 24px;
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+    border-radius: 0;
+  }
+  .ncta.dk { display: none; }
+  .hbg { display: flex; }
+
+  /* Hero */
+  .hero-l-content { padding: 56px 20px 52px; }
+  .hero-name  { font-size: clamp(3rem, 12vw, 3.8rem); }
+  .hero-role  { font-size: .78rem; letter-spacing: .08em; }
+  .hero-desc  { font-size: .9375rem; max-width: 100%; }
+  .hero-btns  {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  .hero-btns .btn { width: 100%; justify-content: center; }
+  .hero-meta  { gap: 20px; padding-top: 28px; }
+  .hm-num     { font-size: 2rem; }
+
+  /* About */
+  .about-grid { gap: 36px; margin-top: 36px; }
+  .sk-name    { width: 80px; }
+
+  /* Experience tabs — full-width tap targets */
+  .exp-tab {
+    font-size: .68rem;
+    padding: 10px 12px;
+    min-height: 40px;
+  }
+
+  /* Projects */
+  .proj-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .pc-inner { padding: 28px 22px; min-height: auto; }
+  .pc-img   { height: 180px; }
+
+  /* YouTube */
+  .yt-card { padding: 32px 24px; }
+  .yt-left .btn { width: 100%; justify-content: center; }
+
+  /* Contact — fix success/error divs outside form */
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .c-form { gap: 16px; }
+  .fg input, .fg textarea { font-size: .9rem; padding: 12px 14px; }
+
+  /* Footer */
+  .foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .flinks { gap: 16px; }
+  .fcopy  { font-size: .72rem; }
+}
+
+/* ══════════════════════════════
+   SMALL MOBILE — 480px
+══════════════════════════════ */
+@media (max-width: 480px) {
+  .wrap    { padding: 0 16px; }
+  .section { padding: 60px 0; }
+
+  /* Hero */
+  .hero-l-content { padding: 48px 16px 44px; }
+  .hero-name  { font-size: clamp(2.6rem, 13vw, 3.2rem); }
+  .hero-chip  { font-size: .65rem; padding: 4px 12px; }
+  .hero-desc  { font-size: .9rem; line-height: 1.7; }
+  .hero-meta  { gap: 16px; }
+  .hm-num     { font-size: 1.8rem; }
+  .hm-label   { font-size: .68rem; }
+
+  /* About pills wrap tighter */
+  .about-pills { gap: 7px; }
+  .ap { font-size: .68rem; padding: 5px 11px; }
+
+  /* Exp tabs scroll horizontally if needed */
+  .exp-nav { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 12px; }
+  .exp-tab  { white-space: nowrap; flex-shrink: 0; }
+
+  /* Project cards */
+  .pc-inner { padding: 24px 18px; }
+  .pc-img   { height: 160px; }
+  .pc-num   { font-size: 3.5rem; }
+  .pc h3    { font-size: 1.1rem; }
+  .pc-links { flex-wrap: wrap; }
+  .pcl      { font-size: .74rem; padding: 7px 13px; }
+
+  /* Education */
+  .edu-card { padding: 24px 20px; }
+
+  /* Contact */
+  .ci { padding: 13px 14px; gap: 10px; }
+  .ci-ico { width: 22px; font-size: .8rem; }
+
+  /* YouTube card */
+  .yt-card { padding: 28px 18px; gap: 14px; }
+
+  /* Footer */
+  .flinks { flex-wrap: wrap; gap: 12px; }
+}
