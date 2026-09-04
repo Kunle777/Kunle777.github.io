@@ -2,37 +2,37 @@
    KUNLETECH PORTFOLIO — responsive.css
 ═══════════════════════════════ */
 
-/* ── Hide custom cursor on touch devices ── */
-@media (hover: none) {
-  #cdot, #cring { display: none; }
-  body { cursor: auto; }
-  .btn, .pcl, .exp-tab, .hbg, .ncta { cursor: pointer; }
-}
-
 /* ══════════════════════════════
    TABLET — 1024px
 ══════════════════════════════ */
 @media (max-width: 1024px) {
   #hero { grid-template-columns: 1fr; min-height: auto; }
-  .hero-r { display: none; }
+  .hero-r {
+    display: flex;
+    padding: 0 36px 64px;
+    border-left: none;
+    background: var(--void);
+  }
+  .hero-r-inner {
+    max-width: 760px;
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
   .hero-l-content { padding: 72px 36px 64px; }
 
   .about-grid { grid-template-columns: 1fr; gap: 48px; }
-  .yt-grid    { grid-template-columns: 1fr; gap: 48px; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
 
   .exp-grid { grid-template-columns: 1fr; }
   .exp-nav {
     position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
     padding-right: 0;
     border-right: none;
     border-bottom: 1px solid var(--rail);
     padding-bottom: 16px;
     margin-bottom: 32px;
-    gap: 6px;
   }
+  .exp-controls { max-width: 360px; }
+  .exp-tabs { flex-direction: row; flex-wrap: wrap; gap: 6px; }
   .exp-panels { padding-left: 0; }
 
   .proj-grid { grid-template-columns: 1fr; }
@@ -43,7 +43,6 @@
    MOBILE — 768px
 ══════════════════════════════ */
 @media (max-width: 768px) {
-  #cdot, #cring { display: none !important; }
   .wrap    { padding: 0 20px; }
   .section { padding: 72px 0; }
 
@@ -73,28 +72,55 @@
 
   /* Hero */
   .hero-l-content { padding: 56px 20px 52px; }
+  .hero-r { padding: 0 20px 56px; }
+  .hero-r-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .profile-photo {
+    width: 132px;
+    aspect-ratio: 4 / 5;
+    margin-left: 2px;
+    border-radius: var(--r2);
+    box-shadow: 12px 12px 0 var(--gold-lo);
+  }
+  .rcard-stack {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .rcard:first-child { grid-column: 1 / -1; }
+  .rcard { padding: 14px 15px; }
+  .rcard-label { font-size: .58rem; margin-bottom: 6px; }
+  .rcard-val { font-size: .82rem; line-height: 1.35; }
+  .rcard-sub { font-size: .68rem; line-height: 1.4; }
   .hero-name  { font-size: clamp(3rem, 12vw, 3.8rem); }
   .hero-role  { font-size: .78rem; letter-spacing: .08em; }
   .hero-desc  { font-size: .9375rem; max-width: 100%; }
   .hero-btns  {
-    flex-direction: column;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     margin-bottom: 40px;
   }
-  .hero-btns .btn { width: 100%; justify-content: center; }
+  .hero-btns .btn { width: 100%; justify-content: center; padding-inline: 12px; }
+  .hero-btns .btn:last-child { grid-column: 1 / -1; }
   .hero-meta  { gap: 20px; padding-top: 28px; }
   .hm-num     { font-size: 2rem; }
 
   /* About */
   .about-grid { gap: 36px; margin-top: 36px; }
-  .sk-name    { width: 80px; }
+  .sk-name    { width: 90px; }
 
   /* Experience tabs — full-width tap targets */
+  .exp-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
   .exp-tab {
     font-size: .68rem;
     padding: 10px 12px;
     min-height: 40px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   /* Projects */
@@ -106,10 +132,6 @@
   }
   .pc-inner { padding: 28px 22px; min-height: auto; }
   .pc-img   { height: 180px; }
-
-  /* YouTube */
-  .yt-card { padding: 32px 24px; }
-  .yt-left .btn { width: 100%; justify-content: center; }
 
   /* Contact — fix success/error divs outside form */
   .contact-grid {
@@ -134,6 +156,7 @@
 
   /* Hero */
   .hero-l-content { padding: 48px 16px 44px; }
+  .hero-r { padding: 0 16px 44px; }
   .hero-name  { font-size: clamp(2.6rem, 13vw, 3.2rem); }
   .hero-chip  { font-size: .65rem; padding: 4px 12px; }
   .hero-desc  { font-size: .9rem; line-height: 1.7; }
@@ -163,9 +186,6 @@
   /* Contact */
   .ci { padding: 13px 14px; gap: 10px; }
   .ci-ico { width: 22px; font-size: .8rem; }
-
-  /* YouTube card */
-  .yt-card { padding: 28px 18px; gap: 14px; }
 
   /* Footer */
   .flinks { flex-wrap: wrap; gap: 12px; }

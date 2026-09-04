@@ -45,14 +45,13 @@
 .d4 { transition-delay: .4s; }
 .d5 { transition-delay: .5s; }
 
-/* 3D card tilt */
+/* Subtle card lift on hover — kept light, not a gimmick */
 .pc {
-  transform-style: preserve-3d;
   transition: transform .4s var(--ez), box-shadow .4s var(--ez);
 }
 .pc:hover {
-  box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(232,160,32,.06);
+  box-shadow: 0 20px 48px rgba(0,0,0,.45), 0 0 30px rgba(232,160,32,.05);
 }
 
-/* Hero canvas code rain glow */
+/* Hero canvas glow */
 #hero-canvas { filter: blur(.3px); }

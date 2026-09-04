@@ -2,38 +2,6 @@
    KUNLETECH PORTFOLIO — main.js
 ═══════════════════════════════ */
 
-/* ── Custom Cursor ── */
-const dot  = document.getElementById("cdot");
-const ring = document.getElementById("cring");
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-if (window.matchMedia("(hover: hover)").matches) {
-  document.addEventListener("mousemove", e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + "px";
-    dot.style.top  = my + "px";
-  });
-  (function animRing() {
-    rx += (mx - rx) * .12;
-    ry += (my - ry) * .12;
-    ring.style.left = rx + "px";
-    ring.style.top  = ry + "px";
-    requestAnimationFrame(animRing);
-  })();
-  document.querySelectorAll("a, button, [data-tilt]").forEach(el => {
-    el.addEventListener("mouseenter", () => {
-      dot.style.width = "12px"; dot.style.height = "12px";
-      ring.style.width = "48px"; ring.style.height = "48px";
-      ring.style.borderColor = "rgba(232,160,32,.8)";
-    });
-    el.addEventListener("mouseleave", () => {
-      dot.style.width = ""; dot.style.height = "";
-      ring.style.width = ""; ring.style.height = "";
-      ring.style.borderColor = "";
-    });
-  });
-}
-
 /* ── Navbar scroll ── */
 const nav = document.getElementById("nav");
 window.addEventListener("scroll", () => {
@@ -95,46 +63,54 @@ const barObserver = new IntersectionObserver(entries => {
 }, { threshold: .5 });
 document.querySelectorAll(".sk-track").forEach(t => barObserver.observe(t));
 
-/* ── Experience tabs ── */
-document.querySelectorAll(".exp-tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".exp-tab").forEach(t => t.classList.remove("on"));
-    document.querySelectorAll(".exp-panel").forEach(p => p.classList.remove("on"));
-    tab.classList.add("on");
-    document.getElementById("tab-" + tab.dataset.tab).classList.add("on");
-  });
-});
+/* ── Experience slider ── */
+const expTabs = [...document.querySelectorAll(".exp-tab")];
+const expPanels = [...document.querySelectorAll(".exp-panel")];
+const expProgress = document.getElementById("exp-progress");
+let activeExperience = 0;
 
-/* ── Hero Canvas: Code Rain ── */
+function showExperience(index) {
+  activeExperience = (index + expTabs.length) % expTabs.length;
+  expTabs.forEach((tab, tabIndex) => {
+    const selected = tabIndex === activeExperience;
+    tab.classList.toggle("on", selected);
+    tab.setAttribute("aria-selected", selected);
+  });
+  expPanels.forEach((panel, panelIndex) => panel.classList.toggle("on", panelIndex === activeExperience));
+  if (expProgress) expProgress.textContent = `${String(activeExperience + 1).padStart(2, "0")} / ${String(expTabs.length).padStart(2, "0")}`;
+}
+
+expTabs.forEach((tab, index) => tab.addEventListener("click", () => showExperience(index)));
+document.getElementById("exp-prev")?.addEventListener("click", () => showExperience(activeExperience - 1));
+document.getElementById("exp-next")?.addEventListener("click", () => showExperience(activeExperience + 1));
+
+/* ── Hero Canvas: subtle ambient grid, not a "hacker" effect ──
+   Kept minimal and low-opacity so it reads as texture, not a gimmick. */
 (function initCanvas() {
   const canvas = document.getElementById("hero-canvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   let W, H, drops;
-  const chars = "01アイウエオカキクケコNEXT.JSSUPABASEREACTNODE".split("");
-  const COL_W = 18;
+  const COL_W = 26;
 
   function resize() {
     W = canvas.width  = canvas.offsetWidth;
     H = canvas.height = canvas.offsetHeight;
-    drops = Array(Math.floor(W / COL_W)).fill(1);
+    drops = Array(Math.floor(W / COL_W)).fill(0).map(() => Math.random() * H);
   }
   resize();
   window.addEventListener("resize", resize);
 
   function draw() {
-    ctx.fillStyle = "rgba(5,5,10,0.05)";
+    ctx.fillStyle = "rgba(5,5,10,0.06)";
     ctx.fillRect(0, 0, W, H);
-    ctx.font = "13px 'Fira Code', monospace";
     drops.forEach((y, i) => {
-      const ch = chars[Math.floor(Math.random() * chars.length)];
-      const x  = i * COL_W;
-      // gold for top character
-      ctx.fillStyle = `rgba(232,160,32,${Math.random() > .95 ? 1 : 0.18})`;
-      ctx.fillText(ch, x, y * 18);
-      if (y * 18 > H && Math.random() > .975) drops[i] = 0;
-      drops[i]++;
+      const x = i * COL_W;
+      ctx.fillStyle = "rgba(232,160,32,0.16)";
+      ctx.fillRect(x, y, 2, 2);
+      drops[i] += 0.6;
+      if (drops[i] > H) drops[i] = 0;
     });
   }
-  setInterval(draw, 50);
+  setInterval(draw, 60);
 })();
