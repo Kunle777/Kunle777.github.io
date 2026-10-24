@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elvyn case study — Abdulrazaq Olanipekun</title>
+  <meta name="description" content="Engineering case study of Elvyn, an AI-assisted productivity app built with FastAPI, PostgreSQL and pgvector, Celery, and React Native: architecture, retrieval-augmented generation, and current status." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://kunle777.github.io/elvyn/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Elvyn case study — Abdulrazaq Olanipekun" />
+  <meta property="og:description" content="Architecture, retrieval-augmented generation and engineering decisions behind Elvyn, a FastAPI and React Native app." />
+  <meta property="og:url" content="https://kunle777.github.io/elvyn/" />
+  <meta property="og:image" content="https://kunle777.github.io/assets/images/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0e1117" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" type="image/x-icon" href="../assets/favicon/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../">Abdulrazaq Olanipekun</a>
+      <nav class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="../#elvyn" aria-current="page">Elvyn</a></li>
+          <li><a href="../#work">Other work</a></li>
+          <li><a href="../#experience">Experience</a></li>
+          <li><a href="../#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="article">
+    <div class="wrap">
+      <a class="back" href="../#elvyn">← Back to portfolio</a>
+      <p class="eyebrow">Engineering case study</p>
+      <h1>Elvyn: an AI-assisted productivity app</h1>
+      <p class="muted">A mobile app for planning tasks, capturing thoughts and reflecting on progress, with an AI coach that answers from the user's own notes and asks before it changes anything.</p>
+
+      <dl class="facts">
+        <div><dt>Status</dt><dd>Personal project, in development. Not publicly released and has no users.</dd></div>
+        <div><dt>Role</dt><dd>Sole developer: backend, mobile client and AI integration.</dd></div>
+        <div><dt>Stack</dt><dd>FastAPI, SQLAlchemy 2.0, Alembic, PostgreSQL (Supabase), pgvector, Celery, Redis, Gemini, React Native (Expo), TypeScript</dd></div>
+        <div><dt>Source</dt><dd><a href="https://github.com/Kunle777/change-app" rel="noopener">github.com/Kunle777/change-app</a></dd></div>
+      </dl>
+
+      <aside class="glance" aria-labelledby="glance-title">
+        <p class="eyebrow" id="glance-title">If you only have a minute</p>
+        <ul>
+          <li><a href="#ai-rag"><strong>Retrieval that stays in its lane.</strong> Vector search is filtered to one user, thresholded, and falls back to a normal answer if anything fails.</a></li>
+          <li><a href="#decisions"><strong>The model suggests, the app decides.</strong> Creating a task runs directly; edits and deletes need the user's confirmation.</a></li>
+          <li><a href="#challenges"><strong>Indexing that survives concurrent edits.</strong> Work is re-checked after the slow embedding call, so stale or revoked data is never saved.</a></li>
+          <li><a href="#status"><strong>Honest status.</strong> A personal project in development, with the known gaps listed.</a></li>
+        </ul>
+      </aside>
+
+      <h2 id="overview">Overview</h2>
+      <p>Elvyn helps a person plan their day and keep track of what they are thinking. The app has tasks with reminders and recurring schedules, a calendar, a Brain Dump for quick notes (including voice capture), daily check-ins, a log of wins, and an AI screen where the user can ask questions.</p>
+      <p>The interesting problem is the AI screen. A generic chatbot knows nothing about the user. Elvyn retrieves the user's own earlier notes and check-ins when a question refers to them, and gives the model that text as context. It also needs to let the model help without letting it silently change or delete the user's data.</p>
+      <p>The repository is still named <code>change-app</code>, from the project's earlier working name.</p>
+
+      <h2 id="role">My role</h2>
+      <p>I designed and built all of it: the API and database schema, authentication, background workers, the retrieval pipeline and prompt construction, the AI tool layer, and the React Native client. There is no team and no other contributor.</p>
+
+      <h2 id="architecture">Architecture</h2>
+      <figure>
+        <svg class="diagram diagram-svg" viewBox="0 0 760 400" role="img" aria-labelledby="diagram-title diagram-desc">
+          <title id="diagram-title">Elvyn system architecture</title>
+          <desc id="diagram-desc">The mobile app signs in with Supabase Auth and calls the FastAPI backend with a JWT. The backend reads and writes PostgreSQL with pgvector and calls Gemini. It enqueues jobs in Redis, which Celery workers consume. Workers read and write PostgreSQL and call Gemini for embeddings.</desc>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" class="head" />
+            </marker>
+          </defs>
+
+          <rect class="box" x="20" y="30" width="170" height="64" rx="4" />
+          <text x="105" y="58" text-anchor="middle">Supabase Auth</text>
+          <text class="sub" x="105" y="78" text-anchor="middle">sign-in, issues JWT</text>
+
+          <rect class="box" x="20" y="150" width="170" height="70" rx="4" />
+          <text x="105" y="180" text-anchor="middle">Mobile app</text>
+          <text class="sub" x="105" y="200" text-anchor="middle">React Native · Expo · TS</text>
+
+          <rect class="box-accent" x="270" y="150" width="190" height="70" rx="4" />
+          <text x="365" y="180" text-anchor="middle">FastAPI backend</text>
+          <text class="sub" x="365" y="200" text-anchor="middle">verifies JWT · user-scoped</text>
+
+          <rect class="box" x="570" y="150" width="170" height="70" rx="4" />
+          <text x="655" y="180" text-anchor="middle">PostgreSQL</text>
+          <text class="sub" x="655" y="200" text-anchor="middle">Supabase · pgvector</text>
+
+          <rect class="box" x="270" y="30" width="190" height="64" rx="4" />
+          <text x="365" y="58" text-anchor="middle">Gemini API</text>
+          <text class="sub" x="365" y="78" text-anchor="middle">generation · embeddings</text>
+
+          <rect class="box" x="270" y="300" width="190" height="70" rx="4" />
+          <text x="365" y="330" text-anchor="middle">Redis</text>
+          <text class="sub" x="365" y="350" text-anchor="middle">job queue (Celery broker)</text>
+
+          <rect class="box" x="570" y="300" width="170" height="70" rx="4" />
+          <text x="655" y="327" text-anchor="middle">Celery workers</text>
+          <text class="sub" x="655" y="347" text-anchor="middle">index · remind · outbox</text>
+
+          <path class="line" d="M105,94 V150" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+          <path class="line" d="M190,185 H270" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+          <path class="line" d="M460,185 H570" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+          <path class="line" d="M365,150 V94" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+          <path class="line" d="M365,220 V300" marker-end="url(#arrow)" />
+          <path class="line" d="M570,335 H460" marker-end="url(#arrow)" />
+          <path class="line" d="M655,300 V220" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+          <path class="line" d="M740,335 H750 V62 H460" marker-end="url(#arrow)" />
+        </svg>
+        <ol class="flow-list">
+          <li><strong>Sign-in.</strong> The mobile app signs in with Supabase Auth and receives a JWT.</li>
+          <li><strong>Requests.</strong> The app calls the FastAPI backend with that token. The backend verifies it and scopes every query to that user.</li>
+          <li><strong>Data.</strong> FastAPI reads and writes PostgreSQL, which also stores the pgvector embeddings.</li>
+          <li><strong>AI.</strong> FastAPI calls Gemini to generate answers and to embed the user's question.</li>
+          <li><strong>Background jobs.</strong> FastAPI queues work in Redis. Celery workers pick it up: they embed new notes through Gemini and save the vectors to PostgreSQL, send reminders, and deliver outbox events.</li>
+        </ol>
+        <figcaption>The client talks only to the API. Slow or scheduled work (embedding, reminders, event delivery) runs in workers so a request never waits on it.</figcaption>
+      </figure>
+      <p>The backend is organised by domain rather than by layer: separate packages for users, tasks, brain dumps, check-ins, wins, memory (retrieval) and AI. Each owns its models, schemas and routes. Migrations are managed with Alembic, and the API is fully async, using SQLAlchemy 2.0's async sessions.</p>
+
+      <h2 id="decisions">Engineering decisions</h2>
+
+      <h3>Authentication and user-data isolation</h3>
+      <p>Supabase issues the JWT. The backend verifies it on each request, supporting both ES256 (public keys fetched from the project's JWKS endpoint) and HS256, and then loads the user's profile. Every domain query filters by the authenticated user's id, including the vector search, which also filters by embedding model and an optional time window. I chose to enforce this in application queries consistently and not rely on a single mechanism.</p>
+
+      <h3>Background work lives outside the request</h3>
+      <p>Embedding calls are slow and can fail, and reminders must fire when the app is closed. Celery with Redis runs reminders every minute, spawns recurring tasks hourly, delivers events, and indexes memory. The trade-off is more moving parts to run and monitor than in-process background tasks. I accepted that because these jobs have to survive a request ending or the API restarting.</p>
+
+      <h3>Transactional outbox for task events</h3>
+      <p>Task events are written to an outbox table in the same transaction as the change they describe, and a worker delivers them afterwards. A unique constraint de-duplicates events, so a retried job cannot deliver the same event twice.</p>
+
+      <h3>The model suggests; the application decides</h3>
+      <p>The AI layer exposes a small set of tools. Creating a task executes directly. Updating or deleting a task returns a proposal that the user must confirm in the app before anything changes. Tool arguments are validated strictly, so a malformed or unexpected model output is rejected instead of acted on.</p>
+
+      <h2 id="ai-rag">AI and RAG</h2>
+      <h3>How retrieval works</h3>
+      <ol>
+        <li><strong>Index.</strong> Brain dumps and check-ins are split into chunks and embedded with Gemini (<code>gemini-embedding-2</code>, 768 dimensions, L2-normalised, document task type). Vectors are stored in a pgvector table together with the owner, source, content hash and embedding model.</li>
+        <li><strong>Decide.</strong> A question triggers retrieval only when it refers to the user's past ("what did I say about…", "last week", "keep putting off") or matches a retrieval intent. Other questions skip the embedding call.</li>
+        <li><strong>Search.</strong> The question is embedded as a query and compared by cosine distance against only that user's chunks, optionally limited to a time window parsed from the question.</li>
+        <li><strong>Select.</strong> Hits must clear a minimum similarity (0.55), fall within a band of the best hit, respect a per-source cap, and fit a character budget. The selected chunks are sorted by date.</li>
+        <li><strong>Prompt.</strong> The chunks are sanitised, placed in the prompt as context, and returned to the app as sources so the user can see what the answer was based on.</li>
+      </ol>
+      <p>Retrieval supplies context to the model for that one request. Nothing is trained or fine-tuned on the user's data.</p>
+
+      <figure>
+        <pre><code>def select_memories(hits, *, min_similarity=MIN_SIMILARITY, band=RELATIVE_BAND,
+                    max_chunks=MAX_CHUNKS, per_source_cap=PER_SOURCE_CAP,
+                    max_block_chars=MAX_BLOCK_CHARS):
+    ranked = sorted(hits, key=lambda h: h["similarity"], reverse=True)
+    if not ranked or ranked[0]["similarity"] &lt; min_similarity:
+        return []
+    top = ranked[0]["similarity"]
+    chosen, per_source, used = [], {}, 0
+    for h in ranked:
+        sim = h["similarity"]
+        if sim &lt; min_similarity or sim &lt; top - band:
+            break
+        key = (h["source_type"], str(h["source_id"]))
+        if per_source.get(key, 0) &gt;= per_source_cap:
+            continue
+        text = sanitize_for_prompt(h["content"])
+        if used + len(text) &gt; max_block_chars:
+            continue
+        chosen.append(...)          # excerpt: object construction elided
+        per_source[key] = per_source.get(key, 0) + 1
+        used += len(text)
+        if len(chosen) &gt;= max_chunks:
+            break
+    return sorted(chosen, key=lambda m: m.created_at)  # chronological reads better</code></pre>
+        <figcaption>Abridged from <code>change-backend/app/memory/retrieval.py</code>. Returning nothing when no hit is relevant enough matters: an irrelevant memory in the prompt is worse than none.</figcaption>
+      </figure>
+
+      <h3>What is implemented and what is not</h3>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead><tr><th scope="col">Capability</th><th scope="col">Status (October 2026)</th></tr></thead>
+          <tbody>
+            <tr><td>Chunking, embeddings and pgvector storage</td><td>Implemented</td></tr>
+            <tr><td>Retrieval with thresholds, per-source cap and time windows</td><td>Implemented; covered by unit tests with mocked dependencies</td></tr>
+            <tr><td>Sources returned to the app and shown with answers</td><td>Implemented</td></tr>
+            <tr><td>Idempotent background indexing and reconciliation sweep</td><td>Implemented</td></tr>
+            <tr><td>End-to-end verification against a live Postgres instance</td><td>In progress. The Postgres integration test needs a configured test database, and I have not yet recorded a full run.</td></tr>
+            <tr><td>Retrieval quality evaluation set</td><td>Not done. Thresholds are configurable and were calibrated with a small lab script, not a formal benchmark.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="challenges">Challenges and solutions</h2>
+      <h3>Indexing while the data changes underneath it</h3>
+      <p>Embedding takes network time, and in that window a note can be edited or the user can switch AI off. After embedding, the indexer re-checks the user's AI entitlement with a share lock, reloads the source row with <code>FOR UPDATE</code>, and discards the work if the content changed or access was revoked. Otherwise a stale vector or a vector for a disabled user could be saved.</p>
+
+      <h3>The AI should never take the chat down</h3>
+      <p>Query embedding has a five-second timeout, and the vector search runs inside a SAVEPOINT so a failed query cannot poison the surrounding transaction. On any failure the app logs a warning (ids and scores only, never note text) and answers without memory.</p>
+
+      <h3>Keeping the index correct over time</h3>
+      <p>Chunks store a content hash and the embedding model, so unchanged text is never re-embedded and a model upgrade is detected and re-embedded in batches. A sweep every 15 minutes indexes anything missed, removes orphaned chunks and deletes chunks for users who no longer have AI enabled. If enqueueing a job fails, the sweep recovers it.</p>
+
+      <h3>Stored text is untrusted input</h3>
+      <p>Retrieved notes go into a prompt, so they are sanitised: the delimiter tag that wraps memories in the prompt is stripped out, code fences and quotes are neutralised, whitespace is collapsed and each chunk is capped in length. This reduces the risk of a stored note breaking out of its block, but it is not a complete defence against prompt injection.</p>
+
+      <h2 id="status">Current status</h2>
+      <div class="callout">
+        <p><strong>Elvyn is a personal project in development. It is not publicly released and has no users.</strong></p>
+        <p>The backend has an automated pytest suite of several dozen tests, mostly run against mocked dependencies. The mobile client runs on a device through Expo. Known gaps at the time of writing: the retrieval path has not had a recorded run against a live database; request rate limiting is configured but not yet applied to routes; and the repository does not yet have continuous integration or an example environment file. I list them because I would rather you hear them from me.</p>
+      </div>
+
+      <h2 id="source">Source code</h2>
+      <p>The repository is public: <a href="https://github.com/Kunle777/change-app" rel="noopener">github.com/Kunle777/change-app</a>. The best places to start are <code>change-backend/app/memory/</code> (indexing and retrieval), <code>change-backend/app/ai/</code> (prompting and tool actions) and <code>change-backend/celery_app.py</code> (scheduled jobs). The README's roadmap section is older than the code, so trust the code where they differ.</p>
+      <p class="actions">
+        <a class="btn btn-primary" href="https://github.com/Kunle777/change-app" rel="noopener">View on GitHub</a>
+        <a class="btn btn-secondary" href="../#contact">Get in touch</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>© 2026 Abdulrazaq Olanipekun</p>
+      <p><a href="../">Back to portfolio</a></p>
+    </div>
+  </footer>
+</body>
+</html>
