@@ -243,6 +243,27 @@ section { padding: clamp(2.5rem, 6vw, 4.25rem) 0; border-top: 1px solid var(--ru
   .flagship { grid-template-columns: 340px 1fr; gap: 3rem; align-items: start; }
 }
 
+/* ---------- Featured project: RepoRescue ---------- */
+.showcase { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+.showcase h3 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 0.75rem; }
+.fact-card {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  align-self: start;
+}
+.fact-card div { padding: 0.8rem 0; border-top: 1px solid var(--rule); }
+.fact-card div:first-child { border-top: 0; }
+.fact-card dt { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.fact-card dd { margin: 0.2rem 0 0; }
+.showcase-figure { margin-top: 2.5rem; }
+@media (min-width: 860px) {
+  .showcase { grid-template-columns: 1.6fr 1fr; gap: 3rem; align-items: start; }
+}
+
 /* ---------- Secondary work ---------- */
 .work-grid { display: grid; gap: 2.5rem; grid-template-columns: 1fr; }
 .work-item { border-top: 1px solid var(--rule); padding-top: 1.25rem; }
