@@ -269,11 +269,45 @@ section { padding: clamp(2.5rem, 6vw, 4.25rem) 0; border-top: 1px solid var(--ru
 }
 
 /* ---------- Elvyn app screenshots ---------- */
-.phones { display: grid; gap: 2rem; grid-template-columns: 1fr; justify-items: center; margin: 2.5rem 0 0; }
-.phones figure, .phones > div { margin: 0; width: min(100%, 300px); }
-.phones img { border: 1px solid var(--rule); border-radius: 18px; width: 100%; }
-.phones figcaption, .phones .cap { font-size: 0.9rem; color: var(--muted); margin: 0.6rem 0 0; }
-@media (min-width: 700px) { .phones { grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: start; } }
+.phones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 260px));
+  justify-content: center;
+  gap: 2.5rem;
+  margin: 2.5rem 0 0;
+  padding: 2.25rem 1.5rem 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.phones figure { margin: 0; }
+.bezel {
+  background: #0b0d14;
+  padding: 7px;
+  border-radius: 34px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.22), 0 2px 6px rgba(15, 23, 42, 0.18);
+}
+.phones img { width: 100%; height: auto; border-radius: 27px; border: 0; }
+.phones figcaption { font-size: 0.9rem; color: var(--muted); margin: 1.1rem auto 0; text-align: center; max-width: 24ch; }
+.swipe-hint { display: none; }
+.article .phones { background: var(--tint-accent); margin: 2rem 0 0; }
+
+@media (max-width: 699px) {
+  .phones {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 1.75rem 1.25rem 1.5rem;
+  }
+  .phones figure { flex: 0 0 72%; max-width: 260px; scroll-snap-align: center; }
+  .swipe-hint { display: block; margin: 0.6rem 0 0; font-size: 0.85rem; color: var(--muted); text-align: center; max-width: none; }
+}
+@media (min-width: 860px) {
+  .flagship .logo-frame { position: sticky; top: 1.5rem; }
+}
 
 /* ---------- Secondary work ---------- */
 .work-grid { display: grid; gap: 2.5rem; grid-template-columns: 1fr; }
