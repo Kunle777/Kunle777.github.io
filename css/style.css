@@ -268,6 +268,13 @@ section { padding: clamp(2.5rem, 6vw, 4.25rem) 0; border-top: 1px solid var(--ru
   .showcase { grid-template-columns: 1.6fr 1fr; gap: 3rem; align-items: start; }
 }
 
+/* ---------- Elvyn app screenshots ---------- */
+.phones { display: grid; gap: 2rem; grid-template-columns: 1fr; justify-items: center; margin: 2.5rem 0 0; }
+.phones figure, .phones > div { margin: 0; width: min(100%, 300px); }
+.phones img { border: 1px solid var(--rule); border-radius: 18px; width: 100%; }
+.phones figcaption, .phones .cap { font-size: 0.9rem; color: var(--muted); margin: 0.6rem 0 0; }
+@media (min-width: 700px) { .phones { grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: start; } }
+
 /* ---------- Secondary work ---------- */
 .work-grid { display: grid; gap: 2.5rem; grid-template-columns: 1fr; }
 .work-item { border-top: 1px solid var(--rule); padding-top: 1.25rem; }
