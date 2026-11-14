@@ -69,6 +69,21 @@
       <p>The interesting problem is the AI screen. A generic chatbot knows nothing about the user. Elvyn retrieves the user's own earlier notes and check-ins when a question refers to them, and gives the model that text as context. It also needs to let the model help without letting it silently change or delete the user's data.</p>
       <p>The repository is still named <code>change-app</code>, from the project's earlier working name.</p>
 
+      <figure class="phones" aria-label="Elvyn app screenshots">
+        <div>
+          <img src="../assets/images/elvyn-home.webp" width="720" height="1570" alt="Elvyn home screen with a daily note from Elvyn, today's progress, Brain Dump, calendar and today's tasks" loading="lazy" />
+          <p class="cap"><strong>Home.</strong> Today's progress, a daily note, quick capture and tasks.</p>
+        </div>
+        <div>
+          <img src="../assets/images/elvyn-ask.webp" width="720" height="1570" alt="Ask Elvyn screen with suggested questions and a note that saved entries are used only if Personal memory is on" loading="lazy" />
+          <p class="cap"><strong>Ask Elvyn.</strong> Saved entries are used only when Personal memory is on.</p>
+        </div>
+        <div>
+          <img src="../assets/images/elvyn-brain-dump.webp" width="720" height="1570" alt="Elvyn Brain Dump screen in dark mode with a text box, a Speak button and recent dumps marked Possible task or Converted" loading="lazy" />
+          <p class="cap"><strong>Brain Dump.</strong> Type or speak a thought; convert it to a task later.</p>
+        </div>
+      </figure>
+
       <h2 id="role">My role</h2>
       <p>I designed and built all of it: the API and database schema, authentication, background workers, the retrieval pipeline and prompt construction, the AI tool layer, and the React Native client. There is no team and no other contributor.</p>
 
