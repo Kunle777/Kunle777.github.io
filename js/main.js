@@ -49,15 +49,10 @@
       '.article .glance', '.article .facts', '.article > .wrap > h2',
       '.article figure', '.article .callout', '.article .table-wrap'
     ];
-    /* On narrow screens the phones live in a horizontal swipe strip, so reveal
-       the whole strip at once instead of each off-screen phone separately. */
-    var narrow = window.matchMedia('(max-width: 699px)').matches;
-    if (narrow) { selectors.push('.phones'); }
     var seen = [];
     selectors.forEach(function (sel) {
       Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {
         if (seen.indexOf(el) !== -1) { return; }
-        if (narrow && el.tagName === 'FIGURE' && el.closest('.phones')) { return; }
         seen.push(el);
         var siblings = el.parentNode ? Array.prototype.indexOf.call(el.parentNode.children, el) : 0;
         el.style.setProperty('--d', Math.min(siblings, 5) * 90 + 'ms');
