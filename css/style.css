@@ -293,17 +293,19 @@ section { padding: clamp(2.5rem, 6vw, 4.25rem) 0; border-top: 1px solid var(--ru
 .article .phones { background: var(--tint-accent); margin: 2rem 0 0; }
 
 @media (max-width: 699px) {
+  /* Keep the same three-across arrangement as on wide screens, scaled down. */
   .phones {
-    display: flex;
-    justify-content: flex-start;
-    gap: 1.25rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 1.75rem 1.25rem 1.5rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+    padding: 1.25rem 0.8rem 1rem;
+    border-radius: 12px;
   }
-  .phones figure { flex: 0 0 72%; max-width: 260px; scroll-snap-align: center; }
-  .swipe-hint { display: block; margin: 0.6rem 0 0; font-size: 0.85rem; color: var(--muted); text-align: center; max-width: none; }
+  .bezel { padding: 4px; border-radius: 18px; box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2); }
+  .phones img { border-radius: 14px; }
+  /* Under each phone show just its title; the longer caption is for wide screens. */
+  .phones figcaption { font-size: 0; margin-top: 0.7rem; max-width: none; }
+  .phones figcaption strong { font-size: 0.72rem; font-weight: 600; color: var(--ink); display: block; }
+  .swipe-hint { display: none; }
 }
 @media (min-width: 860px) {
   .flagship .logo-frame { position: sticky; top: 1.5rem; }
@@ -539,4 +541,23 @@ a, .btn { transition: color 0.15s ease, background-color 0.15s ease, border-colo
   }
   .work-item:hover { border-top-color: var(--accent); }
   .fact-card:hover { box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08); }
+}
+
+
+/* ---------- Experience badge (hero) ---------- */
+.exp-badge {
+  display: inline-block;
+  margin: 0 0 1.25rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  background: var(--surface);
+  font-size: 0.98rem;
+  color: var(--muted);
+  max-width: none;
+}
+.exp-badge strong { color: var(--accent); font-weight: 700; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-grid > div > :nth-child(7) { animation-delay: 0.65s; }
 }
